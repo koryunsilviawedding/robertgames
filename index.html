@@ -1,1 +1,428 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+  <title>Аквариум Роберта 🐠</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: #0b9ed1;
+    }
+
+    /* СТАРТОВЫЙ ЭКРАН */
+
+    #startScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        radial-gradient(circle at 20% 20%, #67dcff 0%, transparent 25%),
+        linear-gradient(#00aeea, #0077b6);
+
+      transition: opacity 0.7s ease;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.5);
+      animation: float 5s infinite ease-in-out;
+    }
+
+    .b1 {
+      width: 25px;
+      height: 25px;
+      top: 15%;
+      left: 10%;
+    }
+
+    .b2 {
+      width: 45px;
+      height: 45px;
+      top: 30%;
+      right: 10%;
+      animation-delay: 1s;
+    }
+
+    .b3 {
+      width: 18px;
+      height: 18px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 2s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-30px);
+      }
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      font-size: clamp(32px, 8vw, 60px);
+      margin: 0 20px 25px;
+
+      text-shadow:
+        3px 3px 0 #006a9c,
+        0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    #robertButton {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      touch-action: manipulation;
+
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.04);
+      }
+    }
+
+    #robertPhoto {
+      width: min(75vw, 380px);
+      height: min(75vw, 380px);
+      max-height: 55vh;
+
+      object-fit: cover;
+
+      border-radius: 50%;
+
+      border: 8px solid white;
+
+      box-shadow:
+        0 0 0 8px #ffd43b,
+        0 15px 40px rgba(0,0,0,0.35);
+    }
+
+    .tapText {
+      margin-top: 30px;
+      padding: 15px 28px;
+
+      font-size: clamp(22px, 6vw, 32px);
+      font-weight: bold;
+
+      color: white;
+
+      background: #ff9f1c;
+
+      border-radius: 50px;
+
+      box-shadow: 0 5px 0 #d96b00;
+
+      animation: tap 1.5s infinite;
+    }
+
+    @keyframes tap {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-7px);
+      }
+    }
+
+
+    /* ИГРА */
+
+    #gameScreen {
+      display: none;
+
+      min-height: 100vh;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #25c6f7 0%,
+          #00a8e8 50%,
+          #0077b6 100%
+        );
+
+      color: white;
+
+      padding: 20px;
+
+      text-align: center;
+    }
+
+    .gameTitle {
+      font-size: clamp(30px, 8vw, 55px);
+      font-weight: bold;
+
+      margin-top: 20px;
+
+      text-shadow: 3px 3px 0 #006494;
+    }
+
+    .robertCharacter {
+      font-size: 100px;
+      margin: 20px 0;
+    }
+
+    .welcome {
+      font-size: clamp(24px, 6vw, 38px);
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .fish {
+      font-size: clamp(100px, 30vw, 180px);
+      cursor: pointer;
+      display: inline-block;
+
+      animation: swim 3s infinite ease-in-out;
+    }
+
+    @keyframes swim {
+      0%, 100% {
+        transform: translateX(-10px) rotate(-3deg);
+      }
+
+      50% {
+        transform: translateX(10px) rotate(3deg);
+      }
+    }
+
+    .gameButton {
+      display: block;
+
+      width: min(90%, 400px);
+
+      margin: 35px auto;
+
+      padding: 22px;
+
+      border: none;
+
+      border-radius: 50px;
+
+      background: #ffd43b;
+
+      color: #5c4200;
+
+      font-size: clamp(24px, 6vw, 34px);
+      font-weight: bold;
+
+      cursor: pointer;
+
+      box-shadow: 0 7px 0 #d39e00;
+
+      touch-action: manipulation;
+    }
+
+    .gameButton:active {
+      transform: translateY(5px);
+      box-shadow: 0 2px 0 #d39e00;
+    }
+
+    .musicButton {
+      position: fixed;
+
+      top: 15px;
+      right: 15px;
+
+      width: 60px;
+      height: 60px;
+
+      border: none;
+      border-radius: 50%;
+
+      font-size: 28px;
+
+      background: white;
+
+      cursor: pointer;
+
+      z-index: 20;
+    }
+
+    @media (max-height: 650px) {
+      h1 {
+        margin-bottom: 15px;
+      }
+
+      #robertPhoto {
+        max-height: 45vh;
+      }
+
+      .tapText {
+        margin-top: 20px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- МУЗЫКА -->
+
+  <audio id="music" loop>
+    <source src="music(1).mp3" type="audio/mpeg">
+  </audio>
+
+
+  <!-- СТАРТОВЫЙ ЭКРАН -->
+
+  <div id="startScreen">
+
+    <div class="bubble b1"></div>
+    <div class="bubble b2"></div>
+    <div class="bubble b3"></div>
+
+    <h1>🐠 АКВАРИУМ РОБЕРТА 🐠</h1>
+
+    <button id="robertButton" aria-label="Начать игру">
+
+      <img
+        id="robertPhoto"
+        src="robert.jpg"
+        alt="Роберт"
+      >
+
+    </button>
+
+    <div class="tapText">
+      👆 Нажми на Роберта!
+    </div>
+
+  </div>
+
+
+  <!-- ИГРА -->
+
+  <main id="gameScreen">
+
+    <button
+      class="musicButton"
+      id="musicButton"
+      aria-label="Музыка"
+    >
+      🔊
+    </button>
+
+    <div class="gameTitle">
+      🐠 Аквариум Роберта 🐠
+    </div>
+
+    <div class="robertCharacter">
+      🧒
+    </div>
+
+    <div class="welcome">
+      Привет, Роберт! 👋<br>
+      Давай раскрасим рыбку! 🎨
+    </div>
+
+    <div class="fish">
+      🐟
+    </div>
+
+    <button class="gameButton">
+      🎨 НАЧАТЬ ИГРУ
+    </button>
+
+  </main>
+
+
+  <script>
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+
+    const robertButton = document.getElementById("robertButton");
+
+    const music = document.getElementById("music");
+
+    const musicButton = document.getElementById("musicButton");
+
+
+    /* НАЖАЛ НА РОБЕРТА */
+
+    robertButton.addEventListener("click", function () {
+
+      /*
+        Запускаем музыку именно после
+        нажатия пользователя.
+
+        Это важно для телефонов.
+      */
+
+      music.play().catch(function(error) {
+        console.log("Музыка пока не запустилась:", error);
+      });
+
+
+      /* Исчезает стартовый экран */
+
+      startScreen.style.opacity = "0";
+
+
+      setTimeout(function () {
+
+        startScreen.style.display = "none";
+
+        gameScreen.style.display = "block";
+
+      }, 700);
+
+    });
+
+
+    /* ВКЛ / ВЫКЛ МУЗЫКИ */
+
+    musicButton.addEventListener("click", function () {
+
+      if (music.paused) {
+
+        music.play();
+
+        musicButton.textContent = "🔊";
+
+      } else {
+
+        music.pause();
+
+        musicButton.textContent = "🔇";
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
